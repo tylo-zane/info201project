@@ -1,9 +1,9 @@
-######## UI #########
+######## UI ########
 #
 # Justin Chan, Nick Zhou, Willa Yang, Tyler Marcinyshyn
 # INFO 201
 # Final Project
-# Eat Vegas - Description 
+# Eat Vegas - Description here
 #
 
 library(shiny)

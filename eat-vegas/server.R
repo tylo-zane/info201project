@@ -20,10 +20,14 @@ data <- read.csv("Food_Vegas.csv") # make sure data file is inside the "eat-vega
 color_list <- list("1" = "#E80000", "1.5" = "#FF4D00", "2" = "#FF8A00", "2.5" = "#FF9900", "3" = "#FFE500", "3.5" = "#E80000", "4" = "#9EFF00", "4.5" = "#70FF00", "5" = "#12DE00")
 
 shinyServer(function(input, output) {
-  # The points to be displayed on the map (TO-DO: Set points to actual restaurants)
+  # The points to be displayed on the map
   selection <- reactive({
     result <- filter(data, grepl(input$cuisine, data$categories, fixed = TRUE) == TRUE)
-    result <- filter(result, grepl(input$neighborhood, result$neighborhood, fixed = TRUE) == TRUE)
+    if (!is.null(input$neighborhood)) {
+      if (input$neighborhood != "All") {
+        result <- filter(result, grepl(input$neighborhood, result$neighborhood, fixed = TRUE) == TRUE)
+      }
+    }
     return(result)
   })
   
@@ -45,7 +49,8 @@ shinyServer(function(input, output) {
   })
   
   output$neighborhoods = renderUI({
-    mydata = unique(data$neighborhood)
+    mydata <- as.list(levels(unique(data$neighborhood)))
+    mydata <- replace(mydata, 1, "All")
     selectInput("neighborhood", "Select a neighborhood:", mydata)
   })
   

@@ -20,10 +20,10 @@ shinyUI(fluidPage(theme = shinytheme("darkly"),
                       img(src='eatLasVegas.png', align = "center", width = "125%"), # LOGO of the app, should be included in "eat-vegas" folder
                       selectInput("cuisine",
                                   "Select a category of cuisine:",
-                                  list("American", "Italian", "French", "Japanese", "Chinese", "Indian", "Mexican", "Vegetarian",
+                                  list("All","American", "Italian", "French", "Japanese", "Chinese", "Indian", "Mexican", "Vegetarian",
                                        "Hawaiian", "Food Truck", "Steakhouses", "Desserts", "Seafood", "Greek", "Bars", "Breakfast & Brunch")),
                       uiOutput('neighborhoods'),
-                      textOutput("description"),
+                      textOutput("summary"),
                       style = "background-color: #6b6b6b"
                     ),
                     # Show a plot of the generated plot

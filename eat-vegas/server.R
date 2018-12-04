@@ -22,7 +22,10 @@ color_list <- list("1" = "#E80000", "1.5" = "#FF4D00", "2" = "#FF8A00", "2.5" = 
 shinyServer(function(input, output) {
   # The points to be displayed on the map
   selection <- reactive({
-    result <- filter(data, grepl(input$cuisine, data$categories, fixed = TRUE) == TRUE)
+    result <- data
+    if (input$cuisine != "All") {
+      result <- filter(data, grepl(input$cuisine, data$categories, fixed = TRUE) == TRUE)
+    }
     if (!is.null(input$neighborhood)) {
       if (input$neighborhood != "All") {
         result <- filter(result, grepl(input$neighborhood, result$neighborhood, fixed = TRUE) == TRUE)
@@ -37,11 +40,16 @@ shinyServer(function(input, output) {
       addTiles('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', 
                attribution='Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>') %>%
       #addProviderTiles(providers$Esri.NatGeoWorldMap) %>%
+      #addRectangles(
+      #  lng1=-115.4, lat1=36.4,
+      #  lng2=-115, lat2=35.9,
+      #  fillColor = "transparent"
+      #) %>%
       setView(lng = -115.1, lat = 36, zoom = 6) %>% # sets initial viewpoint of map
       # color = color_list[toString(selection()$stars)]
-      addCircles(lng = selection()$longitude, lat = selection()$latitude, popup = paste(paste("<b>", selection()$name, "</b>", sep=""), 
+      addCircles(weight= 5, lng = selection()$longitude, lat = selection()$latitude, popup = paste(paste("<b><big>", selection()$name, "</b></big>", sep=""), 
                                                                                         selection()$address,
-                                                                                        paste("<b>Stars: </b>", selection()$stars, sep=""),
+                                                                                        paste("<b>Rated ", selection()$stars, " stars</b> based on ",selection()$review_count," reviews",sep=""),
                                                                                         paste("<b>Categories: </b>", selection()$categories, sep=""),
                                                                                         sep="<br>"),
                  label = selection()$name) %>%
@@ -64,6 +72,10 @@ shinyServer(function(input, output) {
     wordcloud(words = names(freq), freq = freq, min.freq = 4, random.order = FALSE,
               col=rainbow(8), scale=c(8, 0.5), max.words=Inf, rot.per=.1)
     
+  })
+  
+  output$summary <- renderText({
+    paste("Showing",nrow(selection()),"of",nrow(data),"entries.",sep=" ")
   })
   
 })

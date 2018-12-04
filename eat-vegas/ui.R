@@ -8,27 +8,31 @@
 
 library(shiny)
 library(leaflet)
+library(shinythemes)
 
 # Define UI for application that draws a histogram
-shinyUI(fluidPage(
-  
-  titlePanel("Eat Vegas"),
-  
-  # Sidebar with dropdown categories
-  sidebarLayout(
-    position = "left",
-    sidebarPanel(
-      selectInput("cuisine",
-                  "Select a category of cuisine:",
-                  list("Shape", "State", "AM.PM")),
-      selectInput("neighborhood",
-                  "Select a neighborhood:",
-                  list("Standard", "Light")),
-      textOutput("description")
-    ),
-    # Show a plot of the generated plot
-    mainPanel(
-      leafletOutput("foodmap")
-    )
-  )
+shinyUI(fluidPage(theme = shinytheme("darkly"),
+                  
+                  # Sidebar with dropdown categories
+                  sidebarLayout(
+                    position = "left",
+                    sidebarPanel(
+                      img(src='eatLasVegas.png', align = "center", width = "125%"), # LOGO of the app, should be included in "eat-vegas" folder
+                      selectInput("cuisine",
+                                  "Select a category of cuisine:",
+                                  list("American", "Italian", "French", "Japanese", "Chinese", "Indian", "Mexican", "Vegetarian",
+                                       "Hawaiian", "Food Truck", "Steakhouses", "Desserts", "Seafood", "Greek", "Bars", "Breakfast & Brunch")),
+                      uiOutput('neighborhoods'),
+                      textOutput("description"),
+                      style = "background-color: #6b6b6b"
+                    ),
+                    # Show a plot of the generated plot
+                    mainPanel(
+                      tabsetPanel(type = "tabs",
+                                  tabPanel("Plot", leafletOutput("foodmap")),
+                                  tabPanel("Recommendations", plotOutput("wordcloud")),
+                                  tabPanel("About", verbatimTextOutput("about"))
+                      )
+                    )
+                  )
 ))

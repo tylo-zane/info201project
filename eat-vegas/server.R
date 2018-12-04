@@ -1,3 +1,4 @@
+####################################################################################
 ####### SERVER ########
 #
 # Justin Chan, Nick Zhou, Willa Yang, Tyler Marcinyshyn
@@ -6,32 +7,58 @@
 # Eat Vegas - Description here
 #
 
-  library(shiny)
-  library(leaflet)
+library(leaflet)
+library(shiny)
+library(dplyr)
+library(ECharts2Shiny)
+library(ndjson)
+library(wordcloud)
+library(tm)
+library(RColorBrewer)
 
-  # Define server logic required to draw a histogram
-  shinyServer(function(input, output) {
+data <- read.csv("Food_Vegas.csv") # make sure data file is inside the "eat-vegas" app folder
+color_list <- list("1" = "#E80000", "1.5" = "#FF4D00", "2" = "#FF8A00", "2.5" = "#FF9900", "3" = "#FFE500", "3.5" = "#E80000", "4" = "#9EFF00", "4.5" = "#70FF00", "5" = "#12DE00")
 
-    data <- read.csv("Vegas.csv")
-
-    # The points to be displayed on the map (TO-DO: Set points to actual restaurants)
-    selection <- reactive({
-      result <- filter(data, categories == input$Cuisine) %>%
-        filter(substring(Date, 1, 2) == paste0(input$month, "/"))
-      return(result)
-    })
-
-    # The map, to be rendered by leafletOutput()
-    output$foodmap <- renderLeaflet({
-      leaflet() %>%
-        addTiles() %>%
-        setView(lng=-115.1, lat=36, zoom=4) %>% # sets initial viewpoint of map
-        addMarkers(lng = selection()$lng, lat = selection()$lat) %>%
-        fitBounds(~min(-115.4), ~min(36), ~max(-115), ~max(36.5)) # latitude and longitude boundaries
-    })
-
-    # "Incremental changes to the map should be performed in
-    # an observer. Each independent set of things that can change
-    # should be managed in its own observer." - shiny & leaflet tutorial
-
+shinyServer(function(input, output) {
+  # The points to be displayed on the map (TO-DO: Set points to actual restaurants)
+  selection <- reactive({
+    result <- filter(data, grepl(input$cuisine, data$categories, fixed = TRUE) == TRUE)
+    result <- filter(result, grepl(input$neighborhood, result$neighborhood, fixed = TRUE) == TRUE)
+    return(result)
   })
+  
+  # The map, to be rendered by leafletOutput()
+  output$foodmap <- renderLeaflet({
+    leaflet(data) %>%
+      addTiles('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', 
+               attribution='Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>') %>%
+      #addProviderTiles(providers$Esri.NatGeoWorldMap) %>%
+      setView(lng = -115.1, lat = 36, zoom = 6) %>% # sets initial viewpoint of map
+      # color = color_list[toString(selection()$stars)]
+      addCircles(lng = selection()$longitude, lat = selection()$latitude, popup = paste(paste("<b>", selection()$name, "</b>", sep=""), 
+                                                                                        selection()$address,
+                                                                                        paste("<b>Stars: </b>", selection()$stars, sep=""),
+                                                                                        paste("<b>Categories: </b>", selection()$categories, sep=""),
+                                                                                        sep="<br>"),
+                 label = selection()$name) %>%
+      fitBounds(-115.4, 35.9, -115, 36.4) # latitude and longitude boundaries
+  })
+  
+  output$neighborhoods = renderUI({
+    mydata = unique(data$neighborhood)
+    selectInput("neighborhood", "Select a neighborhood:", mydata)
+  })
+  
+  output$wordcloud <- renderPlot({
+    no_empty <- selection()[!(is.na(selection()$neighborhood) | selection()$neighborhood==""), ]
+    text <- Corpus(VectorSource(no_empty$neighborhood))
+    tdm <- TermDocumentMatrix(text)
+    m <- as.matrix(tdm)  
+    freq <- sort(rowSums(m), decreasing = TRUE)
+    par(mar = rep(0, 4))
+    wordcloud(words = names(freq), freq = freq, min.freq = 4, random.order = FALSE,
+              col=rainbow(8), scale=c(8, 0.5), max.words=Inf, rot.per=.1)
+    
+  })
+  
+})

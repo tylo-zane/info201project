@@ -35,7 +35,7 @@ shinyUI(fluidPage(theme = shinytheme("darkly"),
                                            plotOutput("wordcloud"),
                                            textOutput("cloudTwoText"),
                                            plotOutput("wordcloudTwo")),
-                                  tabPanel("About", verbatimTextOutput("about"))
+                                  tabPanel("About", includeMarkdown("www/about.md"))
                       )
                     )
                   )

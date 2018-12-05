@@ -82,9 +82,9 @@ shinyServer(function(input, output) {
     tdm <- TermDocumentMatrix(text)
     m <- as.matrix(tdm)  
     freq <- sort(rowSums(m), decreasing = TRUE)
-    par(mar = rep(0, 4))
+    par(mar = rep(0, 4), bg = "#232323")
     wordcloud(words = names(freq), freq = freq, min.freq = 4, random.order = FALSE,
-              col=rainbow(8), scale=c(8, 0.5), max.words=Inf, rot.per=.1)
+              col=rainbow(8), scale=c(5, 0.5), max.words=Inf, rot.per=.1)
     
   })
   
@@ -94,7 +94,7 @@ shinyServer(function(input, output) {
     tdm <- TermDocumentMatrix(text)
     m <- as.matrix(tdm)  
     freq <- sort(rowSums(m), decreasing = TRUE)
-    par(mar = rep(0, 4))
+    par(mar = rep(0, 4), bg = "#232323")
     wordcloud(words = names(freq), freq = freq, min.freq = 4, random.order = FALSE,
               col=rainbow(8), scale=c(10, .75), max.words=120, rot.per=.1)
     

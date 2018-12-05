@@ -30,7 +30,11 @@ shinyUI(fluidPage(theme = shinytheme("darkly"),
                     mainPanel(
                       tabsetPanel(type = "tabs",
                                   tabPanel("Plot", leafletOutput("foodmap")),
-                                  tabPanel("Recommendations", plotOutput("wordcloud")),
+                                  tabPanel("Recommendations",
+                                           textOutput("cloudOneText"),
+                                           plotOutput("wordcloud"),
+                                           textOutput("cloudTwoText"),
+                                           plotOutput("wordcloudTwo")),
                                   tabPanel("About", verbatimTextOutput("about"))
                       )
                     )

@@ -66,11 +66,7 @@ shinyServer(function(input, output) {
       #) %>%
       setView(lng = -115.2, lat = 36.125, zoom = 10) %>% # sets initial viewpoint of map
       # color = color_list[toString(selection()$stars)]
-      addCircles(weight= 5, lng = selection()$longitude, lat = selection()$latitude, popup = paste(paste("<b><big>", selection()$name, "</b></big>", sep=""), 
-                                                                                        selection()$address,
-                                                                                        paste("<b>Rated ", selection()$stars, " stars</b> based on ",selection()$review_count," reviews",sep=""),
-                                                                                        paste("<b>Categories: </b>", selection()$categories, sep=""),
-                                                                                        sep="<br>"),
+      addCircles(weight= 5, lng = selection()$longitude, lat = selection()$latitude, popup = popupText(),
                  label = selection()$name)
   })
   
@@ -108,6 +104,20 @@ shinyServer(function(input, output) {
     paste("Based on your choice of the",input$cuisine,
           "category, we recommend visiting the following",
           "neighborhoods:", sep=" ")
+  })
+  
+  popupText <- reactive({
+    return(paste(
+          paste("<b><big>", selection()$name, "</b></big>", sep=""), 
+          selection()$address,
+          selection()$neighborhood,
+          paste("<b>Rated ", selection()$stars, " stars</b> based on ",selection()$review_count," reviews",sep=""),
+          paste("<b>Categories: </b>", selection()$categories, sep=""),
+          paste("<b>Noise Level: </b>", selection()$attributes.NoiseLevel,sep=""),
+          paste("<b>Offers Take-out: </b>", selection()$attributes.RestaurantsTakeOut,sep=""),
+          paste("<b>Has outdoor seating: </b>",selection()$attributes.OutdoorSeating,sep=""),
+          paste("<b>Wi-fi available: </b>",selection()$attributes.WiFi,sep=""),
+          sep="<br>"))
   })
   
   output$cloudTwoText <- renderText({

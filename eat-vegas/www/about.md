@@ -27,3 +27,4 @@ Additionally, users can click on the summary tabs to find more statistics result
 
 ## Deliverable App Link:
 Our app is published on the Shiny community:
+https://tylo-zane.shinyapps.io/eat-vegas/

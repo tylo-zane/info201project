@@ -105,16 +105,17 @@ shinyServer(function(input, output) {
   
   popupText <- reactive({
     return(paste(
-          paste("<b><big>", selection()$name, "</b></big>", sep=""), 
-          selection()$address,
-          selection()$neighborhood,
-          paste("<b>Rated ", selection()$stars, " stars</b> based on ",selection()$review_count," reviews",sep=""),
-          paste("<b>Categories: </b>", selection()$categories, sep=""),
-          paste("<b>Noise Level: </b>", selection()$attributes.NoiseLevel,sep=""),
-          paste("<b>Offers Take-out: </b>", selection()$attributes.RestaurantsTakeOut,sep=""),
-          paste("<b>Has outdoor seating: </b>",selection()$attributes.OutdoorSeating,sep=""),
-          paste("<b>Wi-fi available: </b>",selection()$attributes.WiFi,sep=""),
-          sep="<br>"))
+      paste("<b><big>", selection()$name, "</b></big>", sep=""), 
+      selection()$address,
+      selection()$neighborhood,
+      paste("<b>Rated ", selection()$stars, " stars</b> based on ",selection()$review_count," reviews",sep=""),
+      paste("<b>Categories: </b>", selection()$categories, sep=""),
+      paste("<b>Noise Level: </b>", selection()$attributes.NoiseLevel,sep=""),
+      paste("<b>Offers take-out: </b>", selection()$attributes.RestaurantsTakeOut,sep=""),
+      paste("<b>Offers delivery: </b>",selection()$attributes.RestaurantsDelivery,sep=""),
+      paste("<b>Has outdoor seating: </b>",selection()$attributes.OutdoorSeating,sep=""),
+      paste("<b>Wi-fi available: </b>",selection()$attributes.WiFi,sep=""),
+      sep="<br>"))
   })
   
   output$cloudTwoText <- renderText({

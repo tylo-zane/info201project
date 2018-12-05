@@ -34,6 +34,7 @@ shinyServer(function(input, output) {
     return(result)
   })
   
+  # Returns subset of data to be used for the neighborhood wordcloud
   cloudOne <- reactive({
     if (input$cuisine != "All") {
       result <- filter(data, grepl(input$cuisine, data$categories, fixed = TRUE) == TRUE)
@@ -43,6 +44,7 @@ shinyServer(function(input, output) {
     return(result)
   })
   
+  # Returns subset of data to be used for the cuisine wordcloud
   cloudTwo <- reactive({
     result <- data
     if (!is.null(input$neighborhood)) {
@@ -67,12 +69,16 @@ shinyServer(function(input, output) {
                 opacity = 1)
   })
   
+  # The part of the UI where the user selects a neighborhood
+  # List of neighborhoods is retrieved from the data
   output$neighborhoods = renderUI({
     mydata <- as.list(levels(unique(data$neighborhood)))
     mydata <- replace(mydata, 1, "All")
     selectInput("neighborhood", "Select a neighborhood:", mydata)
   })
   
+  # Renders first wordcloud
+  # Shows neighborhoods based on the chosen category
   output$wordcloud <- renderPlot({
     no_empty <- cloudOne()[!(is.na(cloudOne()$neighborhood) | cloudOne()$neighborhood==""), ]
     text <- Corpus(VectorSource(no_empty$neighborhood))
@@ -85,6 +91,8 @@ shinyServer(function(input, output) {
     
   })
   
+  # Renders second wordcloud
+  # Shows categories based on the chosen neighborhood
   output$wordcloudTwo <- renderPlot({
     no_empty <- cloudTwo()[!(is.na(cloudTwo()$categories) | cloudTwo()$categories==""), ]
     text <- Corpus(VectorSource(no_empty$categories))
@@ -97,12 +105,14 @@ shinyServer(function(input, output) {
     
   })
   
+  # Renders text displayed before the first wordcloud
   output$cloudOneText <- renderText({
     paste("Based on your choice of the",input$cuisine,
           "category, we recommend visiting the following",
           "neighborhoods:", sep=" ")
   })
   
+  # Renders popup text. Displayed when a map marker is clicked on.
   popupText <- reactive({
     return(paste(
       paste("<b><big>", selection()$name, "</b></big>", sep=""), 
@@ -118,12 +128,14 @@ shinyServer(function(input, output) {
       sep="<br>"))
   })
   
+  # Renders text displayed before the second wordcloud
   output$cloudTwoText <- renderText({
     paste("Based on your neighborhood choice of ",input$neighborhood,
           ", we recommend the following categories:",
           sep="")
   })
   
+  # Prints how many entries are displayed out of total number of entries
   output$summary <- renderText({
     paste("Showing",nrow(selection()),"of",nrow(data),"entries.",sep=" ")
   })

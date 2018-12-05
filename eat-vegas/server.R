@@ -17,7 +17,7 @@ library(tm)
 library(RColorBrewer)
 
 data <- read.csv("Food_Vegas.csv") # make sure data file is inside the "eat-vegas" app folder
-color_list <- list("1" = "#E80000", "1.5" = "#FF4D00", "2" = "#FF8A00", "2.5" = "#FF9900", "3" = "#FFE500", "3.5" = "#E80000", "4" = "#9EFF00", "4.5" = "#70FF00", "5" = "#12DE00")
+color_list <- list("1" = "#E80000", "1.5" = "#FF4D00", "2" = "#FF8A00", "2.5" = "#FF9900", "3" = "#FFE500", "3.5" = "#FFF500", "4" = "#9EFF00", "4.5" = "#70FF00", "5" = "#12DE00")
 
 shinyServer(function(input, output) {
   # The points to be displayed on the map
@@ -56,18 +56,15 @@ shinyServer(function(input, output) {
   # The map, to be rendered by leafletOutput()
   output$foodmap <- renderLeaflet({
     leaflet(data) %>%
-      addTiles('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', 
-               attribution='Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>') %>%
-      #addProviderTiles(providers$Esri.NatGeoWorldMap) %>%
-      #addRectangles(
-      #  lng1=-115.4, lat1=36.4,
-      #  lng2=-115, lat2=35.9,
-      #  fillColor = "transparent"
-      #) %>%
+      addProviderTiles(providers$Hydda.RoadsAndLabels) %>%
       setView(lng = -115.2, lat = 36.125, zoom = 10) %>% # sets initial viewpoint of map
-      # color = color_list[toString(selection()$stars)]
-      addCircles(weight= 5, lng = selection()$longitude, lat = selection()$latitude, popup = popupText(),
-                 label = selection()$name)
+      addCircles(weight= 5, lng = selection()$longitude, lat = selection()$latitude, color = selection()$color, popup = popupText(),
+                 label = selection()$name) %>%
+      addLegend("bottomright", 
+                colors =c("#E80000", "#FF4D00", "#FF8A00", "#FF9900", "#FFE500", "yellow", "#9EFF00", "#70FF00", "#12DE00"),
+                labels= c("1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0"),
+                title= "Ratings",
+                opacity = 1)
   })
   
   output$neighborhoods = renderUI({

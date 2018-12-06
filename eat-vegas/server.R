@@ -16,7 +16,9 @@ library(tm)
 library(RColorBrewer)
 
 data <- read.csv("Food_Vegas.csv") # make sure data file is inside the "eat-vegas" app folder
-color_list <- list("1" = "#E80000", "1.5" = "#FF4D00", "2" = "#FF8A00", "2.5" = "#FF9900", "3" = "#FFE500", "3.5" = "#FFF500", "4" = "#9EFF00", "4.5" = "#70FF00", "5" = "#12DE00")
+color_list <- list("1" = "#E80000", "1.5" = "#FF4D00", "2" = "#FF8A00", "2.5" = "#FF9900",
+                   "3" = "#FFE500", "3.5" = "#FFF500", "4" = "#9EFF00", "4.5" = "#70FF00", 
+                   "5" = "#12DE00")
 
 shinyServer(function(input, output) {
   # The points to be displayed on the map
@@ -27,7 +29,8 @@ shinyServer(function(input, output) {
     }
     if (!is.null(input$neighborhood)) {
       if (input$neighborhood != "All") {
-        result <- filter(result, grepl(input$neighborhood, result$neighborhood, fixed = TRUE) == TRUE)
+        result <- filter(result, grepl(input$neighborhood, result$neighborhood, 
+                                       fixed = TRUE) == TRUE)
       }
     }
     return(result)
@@ -48,7 +51,8 @@ shinyServer(function(input, output) {
     result <- data
     if (!is.null(input$neighborhood)) {
       if (input$neighborhood != "All") {
-        result <- filter(result, grepl(input$neighborhood, result$neighborhood, fixed = TRUE) == TRUE)
+        result <- filter(result, grepl(input$neighborhood, result$neighborhood, 
+                                       fixed = TRUE) == TRUE)
       }
     }
     return(result)
@@ -59,10 +63,12 @@ shinyServer(function(input, output) {
     leaflet(data) %>%
       addProviderTiles(providers$Hydda.RoadsAndLabels) %>%
       setView(lng = -115.2, lat = 36.125, zoom = 10) %>% # sets initial viewpoint of map
-      addCircles(weight= 5, lng = selection()$longitude, lat = selection()$latitude, color = selection()$color, popup = popupText(),
+      addCircles(weight= 5, lng = selection()$longitude, lat = selection()$latitude, 
+                 color = selection()$color, popup = popupText(),
                  label = selection()$name) %>%
       addLegend("bottomright", 
-                colors = c("#12DE00", "#70FF00", "#9EFF00", "yellow", "#FFE500", "#FF9900", "#FF8A00", "#FF4D00", "#E80000"),
+                colors = c("#12DE00", "#70FF00", "#9EFF00", "yellow", "#FFE500", 
+                           "#FF9900", "#FF8A00", "#FF4D00", "#E80000"),
                 labels= c("5.0", "4.5", "4.0", "3.5", "3.0", "2.5", "2.0", "1.5", "1.0"),
                 title= "Ratings",
                 opacity = 1)
@@ -100,15 +106,16 @@ shinyServer(function(input, output) {
     freq <- sort(rowSums(m), decreasing = TRUE)
     par(mar = rep(0, 4), bg = "#232323")
     wordcloud(words = names(freq), freq = freq, min.freq = 4, random.order = FALSE,
-              col=rainbow(8), scale=c(10, .75), max.words=120, rot.per=.1)
+              col=rainbow(8), scale=c(10, .75), max.words=Inf, rot.per=.1)
     
   })
   
   # Renders text displayed before the first wordcloud
   output$cloudOneText <- renderText({
-    paste("Based on your choice of the",input$cuisine,
-          "category, we recommend visiting the following",
-          "neighborhoods:", sep=" ")
+    paste0("The neighborhood with the biggest font size is the neighborhood with 
+           the largest quantity of the cuisine you are looking for. 
+           Based on your choice of the",input$cuisine,
+          "category, we recommend visiting the following neighborhoods:")
   })
   
   # Renders popup text. Displayed when a map marker is clicked on.
@@ -117,7 +124,8 @@ shinyServer(function(input, output) {
       paste("<b><big>", selection()$name, "</b></big>", sep=""), 
       selection()$address,
       selection()$neighborhood,
-      paste("<b>Rated ", selection()$stars, " stars</b> based on ",selection()$review_count," reviews",sep=""),
+      paste("<b>Rated ", selection()$stars, " stars</b> based on ",
+            selection()$review_count," reviews",sep=""),
       paste("<b>Categories: </b>", selection()$categories, sep=""),
       paste("<b>Noise Level: </b>", selection()$attributes.NoiseLevel,sep=""),
       paste("<b>Offers take-out: </b>", selection()$attributes.RestaurantsTakeOut,sep=""),
@@ -129,9 +137,9 @@ shinyServer(function(input, output) {
   
   # Renders text displayed before the second wordcloud
   output$cloudTwoText <- renderText({
-    paste("Based on your neighborhood choice of ",input$neighborhood,
-          ", we recommend the following categories:",
-          sep="")
+    paste0("The food category with the biggest font size is the food that your neighborhood
+          has the most of. Based on your neighborhood choice of ",input$neighborhood,
+          ", we recommend the following categories:")
   })
   
   # Prints how many entries are displayed out of total number of entries

@@ -62,8 +62,8 @@ shinyServer(function(input, output) {
       addCircles(weight= 5, lng = selection()$longitude, lat = selection()$latitude, color = selection()$color, popup = popupText(),
                  label = selection()$name) %>%
       addLegend("bottomright", 
-                colors =c("#E80000", "#FF4D00", "#FF8A00", "#FF9900", "#FFE500", "yellow", "#9EFF00", "#70FF00", "#12DE00"),
-                labels= c("1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0"),
+                colors = c("#12DE00", "#70FF00", "#9EFF00", "yellow", "#FFE500", "#FF9900", "#FF8A00", "#FF4D00", "#E80000"),
+                labels= c("5.0", "4.5", "4.0", "3.5", "3.0", "2.5", "2.0", "1.5", "1.0"),
                 title= "Ratings",
                 opacity = 1)
   })

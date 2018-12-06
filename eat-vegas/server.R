@@ -2,9 +2,7 @@
 #
 # Justin Chan, Nick Zhou, Willa Yang, Tyler Marcinyshyn
 # INFO 201
-# Final Project
-# Eat Vegas - Description here
-#
+# Final Project - Eat Vegas
 
 library(leaflet)
 library(shiny)
